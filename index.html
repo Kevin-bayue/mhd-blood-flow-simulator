@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MHD Blood Flow Measurement Simulator</title>
+  </head>
+  <body>
+    <main id="app">
+      <header class="top-bar" aria-label="Simulator header">
+        <div class="title-block">
+          <span class="course-label">AP Physics C: E&amp;M</span>
+          <h1>Magnetohydrodynamics and Blood Flow Measurement</h1>
+        </div>
+        <div class="header-controls">
+          <div class="scene-switches" role="group" aria-label="3D guide visibility">
+            <label class="mini-toggle" for="tag-guides">
+              <input id="tag-guides" type="checkbox" checked />
+              <span>Tags</span>
+            </label>
+            <label class="mini-toggle" for="field-guides">
+              <input id="field-guides" type="checkbox" checked />
+              <span>Field guides</span>
+            </label>
+            <label class="mini-toggle" for="force-guides">
+              <input id="force-guides" type="checkbox" checked />
+              <span>Force guides</span>
+            </label>
+          </div>
+          <div class="mode-switch" role="group" aria-label="Mode selection">
+            <button id="learn-mode" class="mode-button active" type="button">Learn Mode</button>
+            <button id="explore-mode" class="mode-button" type="button">Explore Mode</button>
+          </div>
+        </div>
+      </header>
+
+      <section id="learn-view" class="sim-view learn-view" aria-label="Learn mode">
+        <aside id="stage-rail" class="stage-rail" aria-label="Stage list"></aside>
+
+        <section class="visual-card" aria-label="Stage visualization">
+          <div class="visual-header">
+            <div>
+              <span id="stage-progress" class="stage-progress">Stage 1 of 6</span>
+              <h2 id="stage-title">Stage 1</h2>
+            </div>
+            <p id="stage-question" class="stage-question"></p>
+          </div>
+          <div id="stage-visual" class="stage-visual"></div>
+          <div id="process-chain" class="process-chain" aria-label="Measurement process timeline"></div>
+        </section>
+
+        <aside class="concept-panel" aria-label="Stage concept panel">
+          <div class="panel-section">
+            <span class="panel-label">Key Takeaway</span>
+            <p id="stage-takeaway" class="takeaway-text"></p>
+          </div>
+          <div class="panel-section">
+            <span class="panel-label">Main Formula</span>
+            <div id="formula-stack" class="formula-stack"></div>
+          </div>
+          <div class="observe-note">
+            <span class="panel-label">What to observe</span>
+            <p id="observe-text"></p>
+          </div>
+        </aside>
+
+        <nav class="stage-nav" aria-label="Stage navigation">
+          <button id="previous-stage" type="button">Previous</button>
+          <div id="stage-dots" class="stage-dots" aria-label="Stage progress"></div>
+          <button id="next-stage" type="button">Next</button>
+        </nav>
+      </section>
+
+      <section id="explore-view" class="sim-view explore-view" aria-label="Explore mode" hidden>
+        <aside class="stage-rail explore-rail" aria-label="Explore mode navigation">
+          <div class="rail-brand">MHD</div>
+          <button class="rail-item active" type="button" data-explore-panel="measurement">
+            <span class="rail-number">Live</span>
+            <span>Measurement</span>
+          </button>
+          <button class="rail-item" type="button" data-explore-panel="signal">
+            <span class="rail-number">ΔV</span>
+            <span>Signal</span>
+          </button>
+          <button class="rail-item" type="button" data-explore-panel="flow">
+            <span class="rail-number">Q</span>
+            <span>Flow Rate</span>
+          </button>
+        </aside>
+
+        <section class="visual-card explore-main" aria-label="Interactive measurement setup">
+          <div class="visual-header">
+            <div>
+              <span class="stage-progress">Live Model</span>
+              <h2>Explore the measurement</h2>
+            </div>
+            <p class="stage-question">
+              Changing blood velocity, magnetic field, or vessel radius changes the measured ΔV.
+            </p>
+          </div>
+          <div id="explore-visual" class="stage-visual"></div>
+        </section>
+
+        <aside class="explore-side" aria-label="Explore controls and readings">
+          <section class="control-panel">
+            <h3>Controls</h3>
+            <label class="control-row" for="magnetic-field">
+              <span>Magnetic field B₀</span>
+              <input id="magnetic-field" type="range" min="0" max="1" step="0.01" value="0.50" />
+              <output id="magnetic-field-value">0.50 T</output>
+            </label>
+            <label class="control-row" for="radius">
+              <span>Vessel radius r₀</span>
+              <input id="radius" type="range" min="1" max="5" step="0.1" value="2.0" />
+              <output id="radius-value">2.0 mm</output>
+            </label>
+            <label class="control-row" for="velocity">
+              <span>Blood velocity v</span>
+              <input id="velocity" type="range" min="0" max="1" step="0.01" value="0.30" />
+              <output id="velocity-value">0.30 m/s</output>
+            </label>
+            <label class="control-row" for="noise">
+              <span>Noise level</span>
+              <input id="noise" type="range" min="0" max="20" step="1" value="3" />
+              <output id="noise-value">3%</output>
+            </label>
+            <label class="toggle-row" for="pulsatile">
+              <input id="pulsatile" type="checkbox" />
+              <span>Pulsatile flow</span>
+            </label>
+          </section>
+
+          <section class="readout-panel explore-panel active" data-panel="measurement">
+            <h3>Live Measurement</h3>
+            <div class="readout-grid">
+              <div><span>Measured ΔV</span><strong id="measured-dv">0.60 mV</strong></div>
+              <div><span>Magnetic field B₀</span><strong id="readout-b">0.50 T</strong></div>
+              <div><span>Vessel radius r₀</span><strong id="readout-r">2.0 mm</strong></div>
+              <div><span>Electrode spacing l = 2r₀</span><strong id="readout-l">4.0 mm</strong></div>
+              <div><span>Calculated velocity v</span><strong id="calculated-v">0.30 m/s</strong></div>
+              <div><span>Flow rate Q</span><strong id="flow-rate">3.8 mL/s</strong></div>
+            </div>
+            <p class="teaching-note">
+              The electrodes detect the tiny voltage across the vessel. The system uses measured ΔV, B₀, and r₀ to estimate velocity and flow rate.
+            </p>
+          </section>
+
+          <section class="signal-panel explore-panel" data-panel="signal">
+            <div class="graph-title">
+              <span>Measured ΔV over time</span>
+              <small>noise is measurement jitter</small>
+            </div>
+            <canvas id="delta-v-graph" width="720" height="180" aria-label="Measured delta V graph"></canvas>
+            <p class="teaching-note">
+              Pulsatile flow changes the actual signal. Noise adds jitter to the measured ΔV only.
+            </p>
+          </section>
+
+          <section class="flow-panel explore-panel" data-panel="flow">
+            <h3>Flow Calculation</h3>
+            <div class="formula-stack compact">
+              <div class="formula primary static-latex" data-tex="\Delta V=B_0lv=2B_0r_0v"></div>
+              <div class="formula secondary static-latex" data-tex="v=\frac{\Delta V}{2B_0r_0}"></div>
+              <div class="formula secondary static-latex" data-tex="Q=\pi r_0^2v"></div>
+            </div>
+            <div class="readout-grid compact-readout">
+              <div><span>Area A = πr₀²</span><strong id="area-readout">12.6 mm²</strong></div>
+              <div><span>Flow rate Q</span><strong id="flow-rate-detail">3.8 mL/s</strong></div>
+            </div>
+          </section>
+        </aside>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

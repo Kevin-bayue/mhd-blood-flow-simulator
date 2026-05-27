@@ -1,0 +1,16 @@
+{
+  "name": "mhd-flowmeter-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "katex": "^0.17.0",
+    "three": "^0.165.0",
+    "vite": "^5.4.0"
+  }
+}
