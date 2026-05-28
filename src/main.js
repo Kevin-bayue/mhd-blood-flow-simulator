@@ -1155,8 +1155,8 @@ function updateProjectedLabels() {
     if (!position) return;
     const projected = position.project(threeView.camera);
     const isVisible = projected.z > -1 && projected.z < 1;
-    const left = (projected.x * 0.5 + 0.5) * rect.width;
-    const top = (-projected.y * 0.5 + 0.5) * rect.height;
+    const left = Math.round((projected.x * 0.5 + 0.5) * rect.width);
+    const top = Math.round((-projected.y * 0.5 + 0.5) * rect.height);
     const guideHidden =
       (label.dataset.guide === 'field' && !state.showFieldGuides) ||
       (label.dataset.guide === 'force' && !state.showForceGuides);
@@ -1597,7 +1597,10 @@ function renderLearnStage() {
 }
 
 function renderExploreVisual(values) {
-  mountThreeStage(dom.exploreVisual);
+  const mountedStage = dom.exploreVisual?.querySelector('#three-stage');
+  if (!mountedStage || threeView.root !== mountedStage) {
+    mountThreeStage(dom.exploreVisual);
+  }
   if (threeView.currentStage !== 4) {
     updateThreeStage(4);
   }
